@@ -1,0 +1,170 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include <jni.h>
+#include <android/log.h>
+#include<string.h>
+#include "com_android_UpdateTopSystem_DataEng.h"
+#define LOGI_D(...) __android_log_print(ANDROID_LOG_DEBUG, "JniMsg", __VA_ARGS__)
+#define LOGI_I(...) __android_log_print(ANDROID_LOG_INFO, "JniMsg", __VA_ARGS__)
+#define LOGI_W(...) __android_log_print(ANDROID_LOG_WARN, "JniMsg", __VA_ARGS__)
+#define LOGI_E(...) __android_log_print(ANDROID_LOG_ERROR, "JniMsg", __VA_ARGS__)
+
+
+
+#define UINT unsigned int
+#define ULONG unsigned long
+#define UCHAR unsigned char
+
+
+
+
+#define SRC_SYS_FILE_NAME "/mnt/udisk/M18.zip"
+#define DST_SYS_FILE_NAME "/mnt/sdcard/M18.zip"
+#define READ_BUFFER_LEN (128 * 1024)
+
+JNIEXPORT jint JNICALL Java_com_android_UpdateTopSystem_DataEng_jniUdiskIsExistSystemFile
+	(JNIEnv *env, jobject thiz){
+	int              ret;
+	FILE  *hFile;
+
+	ret             = 0;
+	hFile = NULL;
+
+	do
+	{
+		hFile = fopen(SRC_SYS_FILE_NAME, "rb");
+		if(hFile == NULL)
+			break;
+
+		ret = 1;
+	}while(0);
+
+	if(hFile != NULL)
+		fclose(hFile);
+
+	return ret;
+}
+
+JNIEXPORT jint JNICALL Java_com_android_UpdateTopSystem_DataEng_jniM18IsExistSystemFile
+	(JNIEnv *env, jobject thiz){
+		int              ret;
+		FILE  *hFile;
+
+		ret             = 0;
+		hFile = NULL;
+
+		do
+		{
+			hFile = fopen(DST_SYS_FILE_NAME, "rb");
+			if(hFile == NULL)
+				break;
+
+			ret = 1;
+		}while(0);
+
+		if(hFile != NULL)
+			fclose(hFile);
+
+		return ret;
+}
+
+JNIEXPORT jint JNICALL Java_com_android_UpdateTopSystem_DataEng_jniM18CopySystemFile
+	(JNIEnv *env, jobject thiz)
+{
+	return __M18CopyFile(SRC_SYS_FILE_NAME, DST_SYS_FILE_NAME);
+}
+
+JNIEXPORT jint JNICALL Java_com_android_UpdateTopSystem_DataEng_jniM18CopyDataFile
+	(JNIEnv *env, jobject thiz)
+{
+	int ret;
+
+	return ret;
+}
+
+
+int __M18CopyFile(const char *SrcFileName, const char *DstFileName)
+{
+	int              ret;
+	long FileLen;
+	int              ReadLen;
+	int              WriteLen;
+	char *ReadBuf;
+	FILE  *hReadFile;
+	FILE  *hWriteFile;
+
+	ret             = 0;
+	hReadFile = NULL;
+	hWriteFile = NULL;
+	ReadBuf = NULL;
+
+	do
+	{
+		if( SrcFileName == NULL || DstFileName == NULL )
+			//break;
+			return -1;
+		//LOGI_D("1\n");
+		ReadBuf = (char*) malloc( READ_BUFFER_LEN );
+		if(ReadBuf == NULL)
+			//break;
+			return -2;
+		//LOGI_D("2\n");
+		hReadFile = fopen(SrcFileName, "rb");
+		if(hReadFile == NULL)
+			//break;
+			return -3;
+		//LOGI_D("3\n");
+		hWriteFile = fopen(DstFileName, "wb");
+		if(hWriteFile == NULL)
+			//break;
+			return -4;
+		//LOGI_D("4\n");
+		fseek(hReadFile, 0, SEEK_END);
+		FileLen = ftell(hReadFile);
+		if(FileLen == 0)
+			//break;
+			return -5;
+		//LOGI_D("5\n");
+		fseek(hReadFile, 0, SEEK_SET);
+
+		ReadLen = 0;
+		WriteLen = 0;
+
+		while( FileLen > 0 )
+		{
+			ReadLen = fread(ReadBuf, 1, READ_BUFFER_LEN, hReadFile);
+			if(ReadLen == 0)
+			{
+				//LOGI_D("6\n");
+				return -6;
+				//break;
+			}
+
+			WriteLen = fwrite(ReadBuf, 1, ReadLen, hWriteFile);
+			if(WriteLen != ReadLen)
+			{
+				//LOGI_D("7\n");
+				break;
+			}
+
+			FileLen -= WriteLen;
+		}
+
+		if( FileLen > 0 )
+			break;
+
+		ret = 1;
+	}while(0);
+
+	if(ReadBuf != NULL)
+		free(ReadBuf);
+
+	if(hReadFile != NULL)
+		fclose(hReadFile);
+
+	if(hWriteFile != NULL)
+		fclose(hWriteFile);
+
+	return ret;
+}
+

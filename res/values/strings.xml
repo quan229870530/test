@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">系统升级工具</string>
+    <string name="app_name">升级助手</string>
+    <string name="btn_testUSB">检测USB</string>
+    <string name="btn_copySystem"> 一 键 升 级 </string>
+    <string name="btn_copyData">拷贝数据</string>
+    <string name="btn_copySystemAndData">拷贝系统程序和数据</string>
+    <string name="btn_quit"> 取 消 </string>
+
+    <string name="tv_tip_update_files_exist">已检测到升级数据。\n\n请点击 【一键升级】 键。</string>
+    <string name="tv_tip_update_files_not_exist">
+        升级数据不存在！\n\n升级步骤：
+        \n1.请将文件【update.zip】和【D.img】复制到TF卡根目录；
+        \n2.关闭USB连接；
+        \n3.点击【一键升级】键进行升级。
+    </string>
+
+    <string name="tv_tip_update_finish">完成提示:</string>
+    <string name="tv_tip_update_sucess">升级成功！</string>
+    <string name="dial_btn_yes">确定</string>
+    <string name="tv_tip_copy_failed">复制失败！请释放更多的磁盘空间后，重新升级。</string>
+    <string name="tv_tip_data_prepare_failed">数据准备失败！请手动重启设备后再升级。</string>
+    <string name="tv_tip_update_on_going">正在更新数据，请勿关闭电源，请您耐心等待......</string>
+    <string name="tv_tip_warm">温馨提示：</string>
+
+
+</resources>
