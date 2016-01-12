@@ -7,22 +7,50 @@
     <string name="btn_copyData">拷贝数据</string>
     <string name="btn_copySystemAndData">拷贝系统程序和数据</string>
     <string name="btn_quit"> 取 消 </string>
-
+    <string name="btn_yes"> 确 定 </string>
+	<string name="know">知道了</string>
+    <string name="token">test01</string>
+    <string name="version">kuaxueAndroidPad</string>
+    
     <string name="tv_tip_update_files_exist">已检测到升级数据。\n\n请点击 【一键升级】 键。</string>
     <string name="tv_tip_update_files_not_exist">
-        升级数据不存在！\n\n升级步骤：
+                        升级数据不存在！\n\n升级步骤：
         \n1.请将文件【update.zip】和【D.img】复制到TF卡根目录；
         \n2.关闭USB连接；
         \n3.点击【一键升级】键进行升级。
     </string>
-
+	<string name="tv_native_upgrade_step">
+	            本地升级步骤：
+        \n1.请将文件【update.zip】和【D.img】复制到TF卡根目录；
+        \n2.关闭USB连接；
+        \n3.点击【一键升级】键进行升级。
+   </string>
+    <string name="format_explanation">
+        勾选后会清除平板电脑内存设备中的所有数据,包括:\n
+        1.系统及应用数据和设置;\n
+        1.您的账户信息;\n
+        2.您的学习记录;\n
+        3.已下载的应用;\n
+        但不会格式化SD卡。
+    </string>
+	<string name="file_download_fauily">文件下载失败</string>
+	<string name="currently_is_latest_version">当前已是最新版本</string>
+	<string name="internet_busy">网络繁忙，请稍后再试</string>
+    <string name="tv_online_uadate"> 在 线 升 级 </string>
+    <string name="tv_native_data_no_exist">本地升级数据不存在!</string>
+    <string name="tv_native_data_exist">已检测到本地升级数据</string>
     <string name="tv_tip_update_finish">完成提示:</string>
     <string name="tv_tip_update_sucess">升级成功！</string>
     <string name="dial_btn_yes">确定</string>
     <string name="tv_tip_copy_failed">复制失败！请释放更多的磁盘空间后，重新升级。</string>
     <string name="tv_tip_data_prepare_failed">数据准备失败！请手动重启设备后再升级。</string>
     <string name="tv_tip_update_on_going">正在更新数据，请勿关闭电源，请您耐心等待......</string>
+    <string name="tv_tip_update_on_going1">正在更新数据，请勿关闭电源，\n请您耐心等待......</string>
     <string name="tv_tip_warm">温馨提示：</string>
-
-
+    <string name="discovering_new_version">发现一个新版本，点击确定下载</string>
+    <string name="download_finish">下载完成，是否更新</string>
+    <string name="default_progress">0%</string>
+	<string name="No_networks_available">当前没有网络可用!</string>
+	<string name="sd_unmount">SD卡未挂载</string>
+	<string name="formatting_data_partition">格式化data分区</string>
 </resources>

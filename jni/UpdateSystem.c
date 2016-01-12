@@ -7,7 +7,7 @@ static int __M11CopyAllFile(const char *ImageFileName);
 static int __M11CreateDir(const char *FileName);
 static int __StrRepace(unsigned char *Str, unsigned char src, unsigned char dst);
 static int __M11CopyFile(const char *SrcFileName, const char *DstFileName);
-static int __M11CopyImgFile(FILE *hSrcFile, int StartPos, int Length, const char *DstFileName);
+static int __M11CopyImgFile(FILE *hSrcFile, long long StartPos, unsigned long Length, const char *DstFileName);
 static int __Gbk2Utf8(char *DstBuf, char *SrcBuf);
 
 #define LOGI_D(...) __android_log_print(ANDROID_LOG_DEBUG, "JniMsg", __VA_ARGS__)
@@ -19,7 +19,8 @@ jint M11IsExistSystemFile(void);
 jint M11IsExistDataFile(void);
 jint M11CopyDataFile(void);
 jint M11CopySystemFile(void);
-static int __CheckWritedFile(FILE *hSrcFile, int nStartPos, int nDataLen, const char *pDstFilePath);
+jint M11CopyInternalDataFile(void);
+static int __CheckWritedFile(FILE *hSrcFile, long long nStartPos, unsigned long nDataLen, const char *pDstFilePath);
 
 #define N7PLUS	1
 //#define N787	1 // ODM
@@ -36,6 +37,8 @@ static int __CheckWritedFile(FILE *hSrcFile, int nStartPos, int nDataLen, const 
 
 #define SRC_DATA_FILE_NAME		"/mnt/external_sd/D.img"
 #define DST_DATA_FILE_PATH		"/mnt/sdcard"
+
+#define SRC_INTERNAL_DATA_FILE_NAME		"/mnt/internal_sd/D.img"
 
 #elif N787
 
@@ -83,6 +86,7 @@ static JNINativeMethod gMethods[gMethodNum] = {
 	{ "JniM11IsExistSystemFile", "()I", (jint *)M11IsExistSystemFile },
 	{ "JniM11IsExistDataFile", "()I", (jint *)M11IsExistDataFile },
 	{ "JniM11CopyDataFile", "()I", (jint *)M11CopyDataFile },
+	{ "JniM11CopyInternalDataFile", "()I", (jint *)M11CopyInternalDataFile },
 	{ "JniM11CopySystemFile", "()I", (jint *)M11CopySystemFile },
 };
 
@@ -153,7 +157,7 @@ int TempTestFunc(void)
 }
 */
 
-//ÅĞ¶ÏÏµÍ³³ÌĞòÎÄ¼şÊÇ·ñ´æÔÚ
+//ï¿½Ğ¶ï¿½ÏµÍ³ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½
 int M11IsExistSystemFile(void)
 {
 	int		ret;
@@ -185,7 +189,7 @@ int M11IsExistSystemFile(void)
 	return ret;
 }
 
-//ÅĞ¶Ï×ÊÁÏÊı¾İÊÇ·ñ´æÔÚ
+//Ã…ÃÂ¶ÃÃ—ÃŠÃÃÃŠÃ½Â¾ÃÃŠÃ‡Â·Ã±Â´Ã¦Ã”Ãš
 int M11IsExistDataFile(void)
 {
 	int		ret;
@@ -214,7 +218,7 @@ int M11IsExistDataFile(void)
 	return ret;			
 }
 
-//copyÏµÍ³³ÌĞòÎÄ¼ş
+//copyÏµÍ³ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½
 int M11CopySystemFile(void)
 {
 	return __M11CopyFile(SRC_SYS_FILE_NAME, DST_SYS_FILE_NAME);
@@ -232,16 +236,29 @@ typedef struct tagFileHeadInfo
 typedef struct tagFileListInfo
 {
 	char FileName[124];
-	long StartAddr;
+	unsigned long StartAddr;
 }FileListInfo;
 
-//copyÊı¾İÎÄ¼ş
+typedef struct tagFileListInfo3
+{
+	char FileName[124];
+	int *StartAddr;
+}FileListInfo3;
+
+
+//copyï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½
 int M11CopyDataFile(void)
 {
 	LOGI_D("M11CopyDataFile");
 	return __M11CopyAllFile(SRC_DATA_FILE_NAME);
 }
 
+//copyï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½
+int M11CopyInternalDataFile(void)
+{
+	LOGI_D("M11CopyInternalDataFile");
+	return __M11CopyAllFile(SRC_INTERNAL_DATA_FILE_NAME);
+}
 
 static int __M11CopyAllFile(const char *ImageFileName)
 {
@@ -257,6 +274,7 @@ static int __M11CopyAllFile(const char *ImageFileName)
 	char 			*PrevPath;
 	char 			*CurrName;
 	char			*TempBuf;
+	long offset = 0;
 
 	ret = 0;
 	hReadFile = NULL;
@@ -318,6 +336,7 @@ static int __M11CopyAllFile(const char *ImageFileName)
 			break;
 		}
 		//LOGI_E("ReadBuf = (char*) malloc( (HeadInfo.FileNum + 1) * sizeof(FileListInfo) )");
+		//fseek(hReadFile, sizeof(HeadInfo), FILESEEK_BEGIN);
 		fseek(hReadFile, sizeof(HeadInfo), FILESEEK_BEGIN);
 		ReadLen = fread(ReadBuf, 1, (HeadInfo.FileNum + 1) * sizeof(FileListInfo), hReadFile);
 		if(ReadLen != (HeadInfo.FileNum + 1) * sizeof(FileListInfo))
@@ -334,8 +353,13 @@ static int __M11CopyAllFile(const char *ImageFileName)
 
 			memcpy( &ListInfo1, ReadBuf + Count * sizeof(FileListInfo), sizeof(FileListInfo) );
 			memcpy( &ListInfo2, ReadBuf + (Count+1) * sizeof(FileListInfo), sizeof(FileListInfo) );
+			LOGI_E("count = %d", Count);
 
-			//´ÓÎÄ¼şÖĞÈ¡³öµÄÊÇGBK±àÂëµÄ windowÎÄ¼şÏà¶ÔÂ·¾¶
+			long long startAddr1 = ListInfo1.StartAddr;
+			long long startAddr2 = ListInfo2.StartAddr;
+			LOGI_E("ListInfo1.StartAddr = %lld", startAddr1);
+            LOGI_E("ListInfo2.StartAddr = %lld", startAddr2);
+
 			strcpy(TempBuf, ListInfo1.FileName);
 
 			//LOGI_E("TempBuf %s",TempBuf);	
@@ -357,23 +381,23 @@ static int __M11CopyAllFile(const char *ImageFileName)
 
 			*str = '/';
 
-			//µÃµ½ÍêÕûUTF8Â·¾¶
+			//ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½UTF8Â·ï¿½ï¿½
 			//__Gbk2Utf8(TempBuf, ListInfo1.FileName);
 			//strcpy(CurrName, DST_DATA_FILE_PATH, TempBuf);
 			strcpy(CurrName, DST_DATA_FILE_PATH);
 			strcat(CurrName,TempBuf);
 
 			memset(TempBuf,0,1024);
-			//µÃµ½ÍêÕûUTF8Â·¾¶
+			//ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½UTF8Â·ï¿½ï¿½
 			__Gbk2Utf8(TempBuf, CurrName);
 			//LOGI_E("CurrName  %s",TempBuf);
 			/*
 			fseek(logfp, 0, SEEK_END);
-			fwrite("copy¾µÏñÖĞµÄ", 1, strlen("copy¾µÏñÖĞµÄ"), logfp);
+			fwrite("copyï¿½ï¿½ï¿½ï¿½ï¿½Ğµï¿½", 1, strlen("copyï¿½ï¿½ï¿½ï¿½ï¿½Ğµï¿½"), logfp);
 			fwrite("\r\n",1,2,logfp);
 			*/
-			//copy¾µÏñÖĞµÄÎÄ¼şµ½¶ÔÓ¦Ä¿Â¼ÏÂ
-			Temp = __M11CopyImgFile(hReadFile, ListInfo1.StartAddr, (ListInfo2.StartAddr - ListInfo1.StartAddr), TempBuf); 
+			//copyÂ¾ÂµÃÃ±Ã–ÃÂµÃ„ÃÃ„Â¼Ã¾ÂµÂ½Â¶Ã”Ã“Â¦Ã„Â¿Ã‚Â¼ÃÃ‚
+			Temp = __M11CopyImgFile(hReadFile, startAddr1, (startAddr2 - startAddr1), TempBuf);
 			if(Temp == 0)
 			{
 				LOGI_D("CopyImgFile failed!");
@@ -385,27 +409,26 @@ static int __M11CopyAllFile(const char *ImageFileName)
 			// do not check data!
 
 #else
-			// Ğ£ÑéĞ´ÈëµÄÊı¾İ
-			if(__CheckWritedFile(hReadFile, ListInfo1.StartAddr, (ListInfo2.StartAddr - ListInfo1.StartAddr), TempBuf) == 0)
+			// Ğ£ï¿½ï¿½Ğ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			if(__CheckWritedFile(hReadFile, startAddr1, (startAddr2 - startAddr1), TempBuf) == 0)
 			{
 				LOGI_D("CheckWritedFile failed!");
-				// Ğ£ÑéÎ´Í¨¹ı£¬ÖØĞÂ¿½±´Ò»´ÎÊı¾İ
-				if(__M11CopyImgFile(hReadFile, ListInfo1.StartAddr, (ListInfo2.StartAddr - ListInfo1.StartAddr), TempBuf) == 0)
+				// Ğ£ï¿½ï¿½Î´Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¿ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+				if(__M11CopyImgFile(hReadFile, startAddr1, (startAddr2 - startAddr1), TempBuf) == 0)
 				{
-					// ¿½±´³ö´í£¬ÍË³ö
+					// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë³ï¿½
 					LOGI_D("redo CopyImgFile failed!");
 					break;
 				}
-				// ÔÙ´ÎĞ£Ñé
-				if(__CheckWritedFile(hReadFile, ListInfo1.StartAddr, (ListInfo2.StartAddr - ListInfo1.StartAddr), TempBuf) == 0)
+				// ï¿½Ù´ï¿½Ğ£ï¿½ï¿½
+				if(__CheckWritedFile(hReadFile, startAddr1, (startAddr2 - startAddr1), TempBuf) == 0)
 				{
-					// ÈÔÎ´Ğ£ÑéÍ¨¹ı£¬ÍË³ö
+					// ÃˆÃ”ÃÂ´ÃÂ£Ã‘Ã©ÃÂ¨Â¹Ã½Â£Â¬ÃÃ‹Â³Ã¶
 					LOGI_D("redo CheckWritedFile failed!");
 					break;
 				}
 			}
 #endif
-
 			Count++;
 		}
 
@@ -736,7 +759,17 @@ static int __M11CopyFile(const char *SrcFileName, const char *DstFileName)
 	return ret;
 }
 
-static int __M11CopyImgFile(FILE *hSrcFile, int StartPos, int Length, const char *DstFileName)
+int fseek_64(FILE *stream, int64_t offset, int origin) {
+    setbuf(stream, NULL); //æ¸…ç©ºbuffer
+    int fd = fileno(stream);
+    if (lseek64(fd, offset, origin) == -1) {
+    	LOGI_E("fseek_64 error");
+    	return errno;
+    }
+    return 0;
+}
+
+static int __M11CopyImgFile(FILE *hSrcFile, long long StartPos, unsigned long Length, const char *DstFileName)
 {
 	int		ret;
 	int		ReadLen;
@@ -778,7 +811,14 @@ static int __M11CopyImgFile(FILE *hSrcFile, int StartPos, int Length, const char
 	//	LOGI_E("__M11CopyImgFile hDstFile = fopen(DstFileName");
 		ReadLen = 0;
 		WriteLen = 0;
-		fseek(hSrcFile, StartPos, FILESEEK_BEGIN);
+		LOGI_E("StartPos ld = %lld", StartPos);
+		LOGI_E("Length ld = %ld", Length);
+
+		if(0 == fseek_64(hSrcFile, StartPos, FILESEEK_BEGIN)) {
+			//LOGI_E("fseek success !!!");
+		} else {
+			LOGI_E("fseek unsuccess !!!");
+		}
 		//LOGI_E("write start");
 	//	LOGI_E("11write start length= %d",Length);
 
@@ -830,7 +870,7 @@ static int __M11CopyImgFile(FILE *hSrcFile, int StartPos, int Length, const char
 
 
 // by jinzhoucheng
-static int __CheckWritedFile(FILE *hSrcFile, int nStartPos, int nDataLen, const char *pDstFilePath)
+static int __CheckWritedFile(FILE *hSrcFile, long long nStartPos, unsigned long nDataLen, const char *pDstFilePath)
 {
 	int		i=0, nRet=0;
 	int		nReadLen=0, nTotalLen=nDataLen;
@@ -852,7 +892,16 @@ static int __CheckWritedFile(FILE *hSrcFile, int nStartPos, int nDataLen, const 
 			break;
 		}
 
-		fseek(hSrcFile, nStartPos, FILESEEK_BEGIN);
+		LOGI_E("nStartPos lld = %lld", nStartPos);
+
+		//fseek(hSrcFile, nStartPos, FILESEEK_BEGIN);
+
+		if(0 == fseek_64(hSrcFile, nStartPos, FILESEEK_BEGIN)) {
+			//LOGI_E("check file fseek success !!!");
+		} else {
+			LOGI_E("check file fseek unsuccess !!!");
+		}
+
 		fseek(hDstFile, 0, FILESEEK_BEGIN);
 
 		pSrcBuf = malloc(READ_BUFFER_LEN);
@@ -906,7 +955,6 @@ ERROR:
 	if(pDstBuf){
 		free(pDstBuf);
 	}
-
 	return nRet;
 }
 

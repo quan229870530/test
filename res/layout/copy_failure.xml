@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/alert" />
+
+    <ProgressBar
+        android:id="@+id/my_progress"
+		style="@style/StyleProgressBarMini"
+		android:layout_width="355dp"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="188dp"
+		android:layout_centerHorizontal="true"
+		android:background="@drawable/progress"
+		android:max="1000"
+		android:progress="0" />
+
+    <TextView
+        android:id="@+id/tv_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp"
+        android:textColor="#f14d5d" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="504dp"
+        android:layout_marginTop="160dp" >
+
+        <ImageView
+            android:id="@+id/quit"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/warning" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textSize="21dp"
+            android:text="@string/btn_quit"
+            android:textColor="#ffffff" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_progress_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="29dp"
+        android:layout_marginTop="182dp"
+        android:textSize="21dp"
+        android:text="@string/default_progress"
+        android:textColor="#f14d5d" />
+    
+    <TextView 
+        android:id="@+id/tv_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp"
+        android:textSize="21dp"
+        android:text="@string/tv_tip_update_on_going1"	/>
+
+</RelativeLayout>

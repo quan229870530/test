@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bg_img"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:background="#4998ff" >
+
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="15dp"
+            android:background="@layout/button_back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/app_name"
+            android:textColor="#ffffff"
+            android:textSize="26sp" />
+    </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <RelativeLayout
+            android:id="@+id/no_exist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="310dp"
+            android:padding="0dp" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/img_no_exist" />
+
+            <TextView
+                android:id="@+id/data_is_exist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:paddingLeft="82dp"
+                android:text="@string/tv_native_data_no_exist"
+                android:textColor="#ffffff"
+                android:textSize="26dp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/no_exist"
+            android:layout_marginTop="15dp"
+            android:gravity="center_horizontal"
+            android:padding="0px" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerInParent="true"
+                android:text="@string/tv_native_upgrade_step"
+                android:textColor="#ffffff"
+                android:textSize="21sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/update"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/content"
+            android:layout_marginTop="50dp"
+            android:padding="0dp" >
+
+            <ImageButton
+                android:id="@+id/btn_update"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:background="@layout/button_update"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <TextView
+                android:id="@+id/tv_step"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:paddingRight="110dp"
+                android:text="@string/tv_online_uadate"
+                android:textColor="#ffffff"
+                android:textSize="21sp" />
+        </RelativeLayout>
+        
+        <RelativeLayout 
+            android:id="@+id/rl_explanation"
+            android:layout_below="@id/update"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RelativeLayout 
+	            android:layout_marginTop="23dp"
+	            android:layout_centerHorizontal="true"
+	            android:background="@drawable/update_prompt"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content">
+	            <TextView 
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:textColor="#ffffff"
+	                android:layout_centerInParent="true"
+	                android:text="@string/format_explanation"
+	                android:textSize="21sp"/>
+	        </RelativeLayout>
+        	<CheckBox 
+                android:id="@+id/cb_formatting_data_partition"
+                android:checked="true"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="48dp"
+                android:button="@drawable/btn_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+	        
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <ImageButton
+        android:id="@+id/btn_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:src="@drawable/icon"
+        android:text="tuichu" />
+
+</LinearLayout>
