@@ -143,7 +143,7 @@ public class UpdateTopSystemActivity extends Activity implements
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		/*添加了一行注释*/
 		findViews();
 		checkLayout();
 		initEvent();
